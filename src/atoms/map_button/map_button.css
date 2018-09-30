@@ -1,0 +1,13 @@
+.map_button {
+  background-color: rgb(255, 255, 255);
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
+  border-radius: 2px;
+  width: 40px;
+  height: 40px;
+  margin: 8px;
+  cursor: pointer;
+}
+
+i {
+  margin: 8px;
+}

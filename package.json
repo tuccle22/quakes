@@ -1,0 +1,30 @@
+{
+  "name": "quakes",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "bootstrap": "^4.1.2",
+    "material-design-icons": "^3.0.1",
+    "moment": "^2.22.2",
+    "open-iconic": "^1.1.1",
+    "react": "^16.4.2",
+    "react-dates": "^17.2.0",
+    "react-dom": "^16.4.2",
+    "react-google-maps": "^9.4.5",
+    "react-helmet": "^5.2.0",
+    "react-popper": "^1.0.0",
+    "react-router-dom": "^4.3.1",
+    "react-scripts": "1.1.4",
+    "react-transition-group": "^2.4.0",
+    "reactstrap": "^6.3.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  }
+}
