@@ -28,5 +28,5 @@ export const setSessionVal = (key, val) => {
 
 export const SavePropsInStorage = ({children, ...props}) => {
   for (const key in props) setSessionVal(key, props[key])
-  return children(...props)
+  return children
 }

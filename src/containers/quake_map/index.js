@@ -5,23 +5,37 @@ import { googleMapsApiKey } from '../../keys'
 const GoogleMapsBase = 'https://maps.googleapis.com/maps/api/js'
 
 class QuakeMap extends PureComponent {
-  constructor(props) {
-    super(props)
-    console.log('QUAKE MAP CONSTRUCTOR', props)
+  constructor() {
+    super()
+    this.isReady = false
   }
+
+  onIdle = () => {
+    this.props.onIdle();
+    if (this.isReady) {
+      this.isReady == false
+      this.props.onMounted();
+    }
+  }
+
+  setMapRef = (map) => {
+    this.props.setMapRef(map)
+    this.isReady = true
+  }
+
   render() {
-    console.log('QuakeMap Props', this.props)
-    const { defaultCenter, defaultZoom, ...rest } = this.props
+    const { children, ...rest } = this.props
 
     // TODO: this doesn't work
     const options = window.google ? (
-      { styles: MAP_OPTIONS, mapTypeId: 'satellite',
-        mapTypeControlOptions: {
+      { mapTypeControlOptions: {
           style: window.google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
           position: window.google.maps.ControlPosition.TOP_CENTER
         }
       }
     ) : {}
+    console.log()
+    console.log('REST', rest)
     return (
       <GoogleMap {...rest}
         googleMapURL={`${GoogleMapsBase}?key=${googleMapsApiKey}&libraries=geometry`}
@@ -29,10 +43,14 @@ class QuakeMap extends PureComponent {
         containerElement={<div style={{ height: `100%` }} />}
         mapElement={<div style={{ height: `100%` }} />}
         options={options}
+        defaultOptions={{styles: MAP_OPTIONS, mapTypeId: 'satellite'}}
+        onIdle={this.onIdle}
+        onMapMounted={this.setMapRef}
       >
-        {this.props.children(this.props)}
+        {children}
       </GoogleMap>
     )
   }
 }
+
 export default QuakeMap
