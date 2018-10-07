@@ -1,10 +1,9 @@
 
-import React, { PureComponent, Component } from 'react'
+import React, { PureComponent } from 'react'
 import moment from 'moment'
 
 import { getQuakesByTime } from '../apis/usgs/earthquakes'
-import { getPercievedRadius, getViewableQuakes, hasMapMoved } from '../utilities/map_utils'
-import { SESSION_KEY, setSessionVal, getSessionVals, SavePropsInStorage } from '../utilities/session/session'
+import { getSessionVals, SavePropsInStorage } from '../utilities/session/session'
 
 const [ date = moment(), quakes = [], quakeFunctions = {} ] = getSessionVals(['date, quakes, quakeFunctions'])
 

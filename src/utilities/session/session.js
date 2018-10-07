@@ -12,11 +12,7 @@ export const getSessionVal = (key, defaultVal) => {
   }
 }
 
-export const getSessionVals = (keys) => {
-  const response = keys.map(_ => getSessionVal(_))
-  console.log(response)
-  return keys.map(_ => getSessionVal(_))
-}
+export const getSessionVals = (keys) => keys.map(_ => getSessionVal(_))
 
 export const setSessionVal = (key, val) => {
   try {

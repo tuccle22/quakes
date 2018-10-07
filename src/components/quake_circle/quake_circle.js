@@ -1,9 +1,7 @@
 import React, { PureComponent, Fragment } from 'react'
 import { InfoWindow } from 'react-google-maps'
 import Radius from '../../atoms/radius/radius'
-import QuakeCard from '../../containers/quake_card/quake_card'
 import { quakeShades } from '../../constants/colors'
-import { getPercievedRadius } from '../../utilities/map_utils'
 
 class QuakeCircleState extends PureComponent {
   constructor(props) {

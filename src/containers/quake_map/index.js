@@ -13,7 +13,7 @@ class QuakeMap extends PureComponent {
   onIdle = () => {
     this.props.onIdle();
     if (this.isReady) {
-      this.isReady == false
+      this.isReady = false
       this.props.onMounted();
     }
   }
@@ -34,8 +34,6 @@ class QuakeMap extends PureComponent {
         }
       }
     ) : {}
-    console.log()
-    console.log('REST', rest)
     return (
       <GoogleMap {...rest}
         googleMapURL={`${GoogleMapsBase}?key=${googleMapsApiKey}&libraries=geometry`}

@@ -1,8 +1,8 @@
 
-import React, { Component, PureComponent, createContext } from 'react'
+import React, { PureComponent } from 'react'
 
 import { getViewableQuakes } from '../utilities/map_utils';
-import { SESSION_KEY, setSessionVal, getSessionVals, SavePropsInStorage } from '../utilities/session/session'
+import {getSessionVals, SavePropsInStorage } from '../utilities/session/session'
 import { MAP_OPTIONS } from '../constants/defaults';
 
 
@@ -21,7 +21,6 @@ let notGoCrazy = 0
 class MapStateProvider extends PureComponent {
   constructor(props) {
     super(props)
-    console.log(center, zoom)
     this.state = {
       center,
       zoom,
@@ -53,13 +52,11 @@ class MapStateProvider extends PureComponent {
 
     this.onIdle = () => {
       if (notGoCrazy > 15) {
-        console.log('IDLE IDLE IDLE', this.state)
         alert('Things are going crazy!')
         notGoCrazy = 0
       }
       notGoCrazy = notGoCrazy + 1
       const { center: lastCenter, zoom: lastZoom } = this.state
-      if (!this.map || !this.map.getCenter()) return
       const lat = this.map.getCenter().lat()
       const lng = this.map.getCenter().lng()
       const zoom = this.map.getZoom()
@@ -83,7 +80,6 @@ class MapStateProvider extends PureComponent {
   }
 
   render() {
-    console.log('MAP STATE STATE', this.state)
     return (
       <Provider value={{ ...this.state, ...this.functions }}>
         <SavePropsInStorage {...this.state}>

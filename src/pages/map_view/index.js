@@ -21,12 +21,14 @@ class MapView extends PureComponent {
           <Col sm='4'>
             <Sidebar>
               <QuakeState> 
-                { ({ date, quakeFunctions, quakes }) =>
+                { ({ date, getQuakesByTime, quakeFunctions, quakes }) =>
                   <Fragment>
                     <Container>
                       <Row style={{marginTop: '16px'}}>
                       <Col md={12}>
-                        <DatePicker date={date} />
+                        <DatePicker date={date} 
+                          getQuakesByTime={getQuakesByTime}
+                        />
                       </Col>
                       </Row>
                     </Container>
