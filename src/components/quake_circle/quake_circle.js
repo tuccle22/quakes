@@ -8,16 +8,15 @@ class QuakeCircleState extends PureComponent {
     super(props)
     this.state = {
       isInfoWindowShown: false,
-      isExpandedInfoWindowShown: false
+      isSelected: false
     }
-
     this.toggleInfoWindow = () => {
-      this.setState( _ => _.isExpandedInfoWindowShown && _.isInfoWindowShown ? null : ({isInfoWindowShown: !_.isInfoWindowShown}))
+      this.setState( _ => _.isSelected && _.isInfoWindowShown ? null : ({isInfoWindowShown: !_.isInfoWindowShown}))
     }
     this.toggleSelect = () => {
       const { center: { lat, lng }, radius } = props
       props.changeCenter({ lat, lng }, radius)
-      this.setState(_ => ({isExpandedInfoWindowShown: !_.isExpandedInfoWindowShown}))
+      this.setState(_ => ({isSelected: !_.isSelected}))
     }
 
     props.quakeFunctions[props.id] = {

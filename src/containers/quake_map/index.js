@@ -26,7 +26,6 @@ class QuakeMap extends PureComponent {
   render() {
     const { children, ...rest } = this.props
 
-    // TODO: this doesn't work
     const options = window.google ? (
       { mapTypeControlOptions: {
           style: window.google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
@@ -34,6 +33,7 @@ class QuakeMap extends PureComponent {
         }
       }
     ) : {}
+
     return (
       <GoogleMap {...rest}
         googleMapURL={`${GoogleMapsBase}?key=${googleMapsApiKey}&libraries=geometry`}
@@ -41,7 +41,6 @@ class QuakeMap extends PureComponent {
         containerElement={<div style={{ height: `100%` }} />}
         mapElement={<div style={{ height: `100%` }} />}
         options={options}
-        defaultOptions={{styles: MAP_OPTIONS, mapTypeId: 'satellite'}}
         onIdle={this.onIdle}
         onMapMounted={this.setMapRef}
       >

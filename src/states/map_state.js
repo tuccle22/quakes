@@ -4,7 +4,7 @@ import React, { PureComponent } from 'react'
 import { getViewableQuakes } from '../utilities/map_utils';
 import {getSessionVals, SavePropsInStorage } from '../utilities/session/session'
 import { MAP_OPTIONS } from '../constants/defaults';
-
+import { MAP } from 'react-google-maps/lib/constants'
 
 const [ center = { lat: 51.38, lng: -66.94 }, zoom = 3 ] = getSessionVals(['center', 'zoom'])
 
@@ -43,12 +43,24 @@ class MapStateProvider extends PureComponent {
       this.setState({ center, zoom })
     }
 
-    this.goToLastBounds = () => {
-      const { zoom, center } = this.lastBounds
+    this.goToLastBounds = () => this.goToBounds(this.lastBounds)
+
+
+    this.goToBounds = ({
+      center = this.state.center,
+      zoom = this.state.zoom
+    }) => {
+      // the map references doesn't update when state changes 
+      this.map.setCenter(center)
+      this.map.setZoom(zoom)
       this.setState({ center, zoom })
     }
 
-    this.getMarkersInViewPort = (quakes) => getViewableQuakes(quakes, this.map)
+    this.getCirclesInViewPort = (quakes) => {
+      const viewableQuakes = getViewableQuakes(quakes, this.map)
+
+      return viewableQuakes
+    }
 
     this.onIdle = () => {
       if (notGoCrazy > 15) {
@@ -67,11 +79,11 @@ class MapStateProvider extends PureComponent {
       }
     }
 
-    this.setMapRef = map => this.map = map
+    this.setMapRef = map => this.map = map.context[MAP]
 
 
     this.functions = {
-      getMarkersInViewPort: this.getMarkersInViewPort,
+      getCirclesInViewPort: this.getCirclesInViewPort,
       setMapRef: this.setMapRef,
       changeCenter: this.goToCircle,
       onIdle: this.onIdle,

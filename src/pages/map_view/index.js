@@ -35,8 +35,8 @@ class MapView extends PureComponent {
                     <Container fluid>
                       <Row>
                         <MapState>
-                          {({ getMarkersInViewPort, changeCenter }) =>
-                            getMarkersInViewPort(quakes).map(quake =>
+                          {({ getCirclesInViewPort, changeCenter }) =>
+                            getCirclesInViewPort(quakes).map(quake =>
                               <Col xl={12} key={quake.id}>
                                 <ListGroup>
                                   <QuakeCardState {...quake}
@@ -59,16 +59,12 @@ class MapView extends PureComponent {
             </Sidebar>
           </Col>
           <Col sm='8' style={{boxShadow: 'rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px'}}>
-            <QuakeState> 
-            { ({init, quakes, quakeFunctions}) => 
-              <MapState> 
-              { ({ goToLastBounds, getMarkersInViewPort, setMapRef, onIdle, changeCenter, zoom, center }) => 
-                <QuakeMap
-                  setMapRef={setMapRef}
-                  zoom={zoom}
-                  center={center}
+            <MapState> 
+            {({ getCirclesInViewPort, changeCenter, ...mapProps }) => 
+              <QuakeState> 
+              {({init, quakes, quakeFunctions}) => 
+                <QuakeMap {...mapProps}
                   onMounted={init}
-                  onIdle={onIdle}
                   defaultCenter={{lat: 49.38, lng: -66.94}}
                   defaultZoom={3}
                 >
@@ -76,19 +72,19 @@ class MapView extends PureComponent {
                     { window.google && 
                       <React.Fragment>
                         <MapControl position={window.google.maps.ControlPosition.LEFT_TOP}>
-                          <MapButton icon='arrow_back' onClick={goToLastBounds} />
+                          <MapButton icon='arrow_back' onClick={mapProps.goToLastBounds} />
                         </MapControl>
                         <MapControl position={window.google.maps.ControlPosition.TOP_CENTER}>
-                          <MapButton onClick={goToLastBounds}>
+                          <MapButton onClick={mapProps.goToLastBounds}>
                             <Icon icon='map' />
                           </MapButton>
-                          <MapButton onClick={goToLastBounds}>
+                          <MapButton onClick={mapProps.goToLastBounds}>
                             <Icon icon='satellite' />
                           </MapButton>
                         </MapControl>
                       </React.Fragment>
                     }
-                    { getMarkersInViewPort(quakes).map(({id, geometry, properties}) =>
+                    { getCirclesInViewPort(quakes).map(({id, geometry, properties}) =>
                       <QuakeCircleState key={id} id={id}
                         center={{lat: geometry.coordinates[1], lng: geometry.coordinates[0]}} 
                         radius={getPercievedRadius(properties.mag)}
@@ -104,10 +100,10 @@ class MapView extends PureComponent {
                     }
                   </React.Fragment>
                 </QuakeMap>
-                }
-              </MapState>
               }
               </QuakeState>
+              }
+            </MapState>
           </Col>
         </Row>
     )

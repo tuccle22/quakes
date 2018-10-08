@@ -10,8 +10,3 @@ export function getViewableQuakes(quakes, map) {
     return map.getBounds().intersects(circle.getBounds())
   })) || []
 }
-
-
-// export function hasMapMoved(center, lat, lng) {
-//   return ((center.lat !== lat && center.lng !== lng) || zoom !== map.getZoom())
-// }
