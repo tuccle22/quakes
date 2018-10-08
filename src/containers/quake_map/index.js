@@ -1,6 +1,5 @@
 import React, { PureComponent} from 'react'
 import GoogleMap from '../../atoms/google_map/google_map'
-import { MAP_OPTIONS } from '../../constants/defaults';
 import { googleMapsApiKey } from '../../keys'
 const GoogleMapsBase = 'https://maps.googleapis.com/maps/api/js'
 
