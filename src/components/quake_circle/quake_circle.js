@@ -1,26 +1,24 @@
 import React, { PureComponent, Fragment } from 'react'
 import { InfoWindow } from 'react-google-maps'
 import Radius from '../../atoms/radius/radius'
-import { QuakeCard } from '../../containers/quake_card/quake_card'
 import { quakeShades } from '../../constants/colors'
-import { getPercievedRadius } from '../../utilities/map_utils'
 
-class QuakeCircle extends PureComponent {
+class QuakeCircleState extends PureComponent {
   constructor(props) {
     super(props)
     this.state = {
       isInfoWindowShown: false,
-      isExpandedInfoWindowShown: false
+      isSelected: false
     }
     this.toggleInfoWindow = () => {
-      this.setState( _ => _.isExpandedInfoWindowShown && _.isInfoWindowShown ? null : ({isInfoWindowShown: !_.isInfoWindowShown}))
+      this.setState( _ => _.isSelected && _.isInfoWindowShown ? null : ({isInfoWindowShown: !_.isInfoWindowShown}))
     }
     this.toggleSelect = () => {
-      const [ lng, lat ] = props.geometry.coordinates
-      console.log(lat, lng)
-      props.changeCenter({lat, lng}, props.properties.mag)
-      this.setState(_ => ({isExpandedInfoWindowShown: !_.isExpandedInfoWindowShown}))
+      const { center: { lat, lng }, radius } = props
+      props.changeCenter({ lat, lng }, radius)
+      this.setState(_ => ({isSelected: !_.isSelected}))
     }
+
     props.quakeFunctions[props.id] = {
       ...props.quakeFunctions[props.id],
       toggleInfoWindow: this.toggleInfoWindow,
@@ -28,7 +26,7 @@ class QuakeCircle extends PureComponent {
     }
   }
 
-  onMouseHover = () => {
+  onHover = () => {
     this.props.quakeFunctions[this.props.id].toggleHighlightCard()
     this.props.quakeFunctions[this.props.id].toggleInfoWindow()
   }
@@ -39,28 +37,36 @@ class QuakeCircle extends PureComponent {
   }
 
   render() {
-    const { id, geometry, properties } = this.props
-    const { isInfoWindowShown, isExpandedInfoWindowShown } = this.state
-    const [ lng, lat ] = geometry.coordinates
-
-    return (
-      <Fragment>
-        <Radius
-          center={{lat: lat, lng: lng}}
-          radius={getPercievedRadius(properties.mag)}
-          color={quakeShades[Math.round(properties.mag)]}
-          onClick={this.onClick}
-          onMouseOver={this.onMouseHover}
-          onMouseOut={this.onMouseHover}
-        />
-        { isInfoWindowShown &&
-          <InfoWindow position={{lat, lng}}>
-            <QuakeCard properties={properties}
-            />
-          </InfoWindow>
-        }
-      </Fragment>
-    )
+    const { quakeFunctions, changeCenter, ...rest } = this.props
+    return this.props.children({
+      ...this.state, ...rest,
+      onHover: this.onHover,
+      onClick: this.onClick
+    })
   }
 }
-export default QuakeCircle
+
+const QuakeCircle = ({
+  children, center, radius, properties, onClick, onHover, isInfoWindowShown
+}) => {
+  const { lat, lng } = center
+  return (
+    <Fragment>
+      <Radius
+        center={{ lat, lng }}
+        radius={radius}
+        color={quakeShades[Math.round(properties.mag)]}
+        onClick={onClick}
+        onMouseOver={onHover}
+        onMouseOut={onHover}
+      />
+      { isInfoWindowShown &&
+        <InfoWindow position={{ lat, lng }}>
+          {children}
+        </InfoWindow>
+      }
+    </Fragment>
+  )
+}
+
+export { QuakeCircleState, QuakeCircle }

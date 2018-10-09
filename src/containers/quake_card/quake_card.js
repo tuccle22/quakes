@@ -4,39 +4,41 @@ import { quakeShades, textColor } from '../../constants/colors'
 
 import './quake_card.css'
 
-class QuakeCardContainer extends PureComponent {
+class QuakeCardState extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       isHighlighted: false,
       isSelected: false
     }
+
     this.toggleHighlight = () => {
       this.setState( _ => _.isSelected && _.isHighlighted ? null : ({ isHighlighted: !_.isHighlighted }))
     }
     this.toggleSelect = () => {
       this.setState( _ => ({ isSelected: !_.isSelected }))
     }
-    // 
+
     props.quakeFunctions[props.id] = {
       ...props.quakeFunctions[props.id],
       toggleHighlightCard: this.toggleHighlight,
       toggleSelectCard: this.toggleSelect
     }
-    this.onMouseHover = () => {
-      this.props.quakeFunctions[this.props.id].toggleHighlightCard()
-      this.props.quakeFunctions[this.props.id].toggleInfoWindow()
-    }
+  }
   
-    this.onClick = () => {
-      this.props.quakeFunctions[this.props.id].toggleSelectCard()
-      this.props.quakeFunctions[this.props.id].toggleSelectCircle()
-    }
+  onMouseHover = () => {
+    this.props.quakeFunctions[this.props.id].toggleHighlightCard()
+    this.props.quakeFunctions[this.props.id].toggleInfoWindow()
+  }
+
+  onClick = () => {
+    this.props.quakeFunctions[this.props.id].toggleSelectCard()
+    this.props.quakeFunctions[this.props.id].toggleSelectCircle()
   }
 
 
   render() {
-    return this.props.render({
+    return this.props.children({
       properties: this.props.properties,
       onClick: this.onClick,
       onMouseHover: this.onMouseHover,
@@ -45,9 +47,7 @@ class QuakeCardContainer extends PureComponent {
   }
 }
 
-export default QuakeCardContainer
-
-export const QuakeCard = ({
+const QuakeCard = ({
   onClick, onMouseHover, isSelected, properties
 }) => {
   const [City, Country] = properties.place.split(" ").slice(-2)
@@ -79,3 +79,4 @@ export const QuakeCard = ({
   )
 }
 
+export { QuakeCardState, QuakeCard }

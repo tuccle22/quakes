@@ -12,11 +12,7 @@ export const getSessionVal = (key, defaultVal) => {
   }
 }
 
-export const getSessionVals = (keys) => {
-  const response = keys.map(_ => getSessionVal(_))
-  console.log(response)
-  return keys.map(_ => getSessionVal(_))
-}
+export const getSessionVals = (keys) => keys.map(_ => getSessionVal(_))
 
 export const setSessionVal = (key, val) => {
   try {
@@ -28,5 +24,5 @@ export const setSessionVal = (key, val) => {
 
 export const SavePropsInStorage = ({children, ...props}) => {
   for (const key in props) setSessionVal(key, props[key])
-  return children(...props)
+  return children
 }

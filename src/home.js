@@ -2,7 +2,8 @@ import React, { PureComponent, Fragment } from 'react'
 import Navbar from './containers/navbar/navbar'
 import MapView from './pages/map_view'
 import LayoutContainer from './pages/layout_container'
-import QuakeMapState from './states/quake_map_state'
+import { MapStateProvider } from './states/map_state'
+import { QuakeStateProvider } from './states/quake_state'
 
 import './index.css'
 
@@ -12,9 +13,11 @@ class Home extends PureComponent {
       <Fragment>
         <Navbar />
         <LayoutContainer>
-          <QuakeMapState>
-            <MapView />
-          </QuakeMapState>
+          <MapStateProvider>
+            <QuakeStateProvider>
+              <MapView />
+            </QuakeStateProvider>
+          </MapStateProvider>
         </LayoutContainer>
       </Fragment>
     )

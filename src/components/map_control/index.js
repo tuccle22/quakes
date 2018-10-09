@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react'
+import PropTypes from 'prop-types'
 import { createPortal } from 'react-dom'
 import { MAP } from 'react-google-maps/lib/constants'
-import PropTypes from 'prop-types'
 
 class MapControl extends PureComponent {
   constructor(props, context) {

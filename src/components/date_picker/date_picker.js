@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react'
+import PropTypes from 'prop-types'
 import moment from 'moment'
 import 'react-dates/initialize'
 import { SingleDatePicker } from 'react-dates'
@@ -23,9 +24,9 @@ class DatePicker extends PureComponent {
     const { focused } = this.state
     return (
       <SingleDatePicker
+        id='quake-date-picker'
         block
         reopenPickerOnClearDate
-        id='quake-date-picker'
         date={date}
         focused={focused}
         onDateChange={this.onDateChange}
@@ -37,7 +38,8 @@ class DatePicker extends PureComponent {
 }
 
 DatePicker.propTypes = {
-
+  getQuakesByTime: PropTypes.func,
+  date: PropTypes.any
 }
 
 export default DatePicker

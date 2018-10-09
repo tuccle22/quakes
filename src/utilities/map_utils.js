@@ -3,15 +3,10 @@ export function getPercievedRadius(mag) {
 }
 
 export function getViewableQuakes(quakes, map) {
-  return quakes.filter( quake => {
+  return (map && map.getBounds() && quakes.filter(quake => {
     const [ lng, lat ] = quake.geometry.coordinates
     const radius = getPercievedRadius(quake.properties.mag)
     const circle = new window.google.maps.Circle({center: {lat, lng}, radius: radius})
     return map.getBounds().intersects(circle.getBounds())
-  })
+  })) || []
 }
-
-
-// export function hasMapMoved(center, lat, lng) {
-//   return ((center.lat !== lat && center.lng !== lng) || zoom !== map.getZoom())
-// }
