@@ -9,4 +9,8 @@ async function getQuakesByTime(start, end) {
   }
 }
 
-export { getQuakesByTime }
+const LONGITUDE = 0
+const LATITUDE = 1
+const DEPTH = 2
+
+export { getQuakesByTime, LONGITUDE, LATITUDE, DEPTH }

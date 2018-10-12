@@ -21,29 +21,37 @@ class QuakeItemState extends PureComponent {
     }
   }
   
-  onMouseHover = () => {
-    this.props.quakeFunctions[this.props.id].toggleHighlightCard()
-    this.props.quakeFunctions[this.props.id].toggleInfoWindow()
+  onMouseOut = () => {
+    const { onQuakeHover, quakeFunctions, id } = this.props
+    quakeFunctions[id].toggleHighlightCard()
+    onQuakeHover()
+  }
+
+  onMouseOver = () => {
+    const { onQuakeHover, quakeFunctions, id, geometry, properties } = this.props
+    quakeFunctions[id].toggleHighlightCard()
+    const [lng, lat] = geometry.coordinates
+    onQuakeHover({ id, properties, center: { lat, lng }})
   }
 
   onClick = () => {
-    this.props.onQuakeSelect(this.props.properties)
-    this.props.quakeFunctions[this.props.id].toggleSelectCircle()
+    const { onQuakeSelect, id, properties, geometry } = this.props
+    const [ lng, lat ] = geometry.coordinates
+    onQuakeSelect({ id, properties, center: {lat, lng} })
   }
-
 
   render() {
     return this.props.children({
       properties: this.props.properties,
       onClick: this.onClick,
-      onMouseHover: this.onMouseHover,
-      isSelected: this.state.isSelected
+      onMouseOver: this.onMouseOver,
+      onMouseOut: this.onMouseOut,
     })
   }
 }
 
 const QuakeItem = ({
-  onClick, onMouseHover, properties
+  properties, ...rest
 }) => {
   const [City, Country] = properties.place.split(" ").slice(-2)
 
@@ -51,11 +59,7 @@ const QuakeItem = ({
   const bgColor = quakeShades[properties.mag > 0 ? Math.round(properties.mag) : 0] 
   const txtColor = textColor(bgColor)
   return (
-    <ListGroupItem className="justify-content-between"
-      onClick={onClick}
-      onMouseOver={onMouseHover}
-      onMouseOut={onMouseHover}
-      >
+    <ListGroupItem {...rest} className="justify-content-between">
       <Badge style={{ backgroundColor: bgColor, color: txtColor }}>
         MAG {properties.mag.toFixed(2)}
       </Badge> &nbsp;

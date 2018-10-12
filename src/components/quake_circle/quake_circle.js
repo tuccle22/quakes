@@ -8,45 +8,46 @@ class QuakeCircleState extends PureComponent {
     super(props)
     this.state = {
       isInfoWindowShown: false,
-      isSelected: false
     }
     this.toggleInfoWindow = () => {
-      this.setState( _ => _.isSelected && _.isInfoWindowShown ? null : ({isInfoWindowShown: !_.isInfoWindowShown}))
-    }
-    this.toggleSelect = () => {
-      const { center: { lat, lng }, radius } = props
       this.setState( _ => {
-        if (_.isSelected) {
-          props.goToLastBounds();
+        if (_.isInfoWindowShown) {
+          return ({isInfoWindowShown: false})
         } else {
-          props.changeCenter({ lat, lng }, radius)
+          return ({isInfoWindowShown: true})
         }
-        return ({isSelected: !_.isSelected})
-      });
+      })
     }
 
     props.quakeFunctions[props.id] = {
       ...props.quakeFunctions[props.id],
-      toggleInfoWindow: this.toggleInfoWindow,
-      toggleSelectCircle: this.toggleSelect
+      toggleInfoWindow: this.toggleInfoWindow
     }
   }
 
-  onHover = () => {
-    this.props.quakeFunctions[this.props.id].toggleHighlightCard()
-    this.props.quakeFunctions[this.props.id].toggleInfoWindow()
+  onMouseOut = () => {
+    const { onQuakeHover, quakeFunctions, id } = this.props
+    quakeFunctions[id].toggleHighlightCard()
+    onQuakeHover()
+  }
+
+  onMouseOver = () => {
+    const { onQuakeHover, quakeFunctions, id, center, properties } = this.props
+    quakeFunctions[id].toggleHighlightCard()
+    onQuakeHover({ id, center, properties })
   }
 
   onClick = () => {
-    this.props.onQuakeSelect(this.props.properties)
-    this.props.quakeFunctions[this.props.id].toggleSelectCircle()
+    const { onQuakeSelect, id, center, properties } = this.props
+    onQuakeSelect({ id, center, properties })
   }
 
   render() {
     const { quakeFunctions, changeCenter, ...rest } = this.props
     return this.props.children({
       ...this.state, ...rest,
-      onHover: this.onHover,
+      onMouseOver: this.onMouseOver,
+      onMouseOut: this.onMouseOut,
       onClick: this.onClick
     })
   }
@@ -54,28 +55,13 @@ class QuakeCircleState extends PureComponent {
 
 const QuakeCircle = ({
   children,
-  center,
-  radius,
   properties,
-  onClick,
-  onHover,
   isInfoWindowShown,
-  onQuakeSelect: deSelect
-}) => {
-  const { lat, lng } = center
+  ...rest
+}) => { 
+  const color = quakeShades[properties.mag > 0 ? Math.round(properties.mag) : 0]
   return (
-    <Fragment>
-      <Radius
-        center={{ lat, lng }}
-        radius={radius}
-        color={quakeShades[properties.mag > 0 ? Math.round(properties.mag) : 0]}
-        onClick={onClick}
-        onMouseOver={onHover}
-        onMouseOut={onHover}
-      />
-      { isInfoWindowShown && children }
-    </Fragment>
-  )
-}
+    <Radius {...rest} color={color} />
+)}
 
 export { QuakeCircleState, QuakeCircle }

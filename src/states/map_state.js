@@ -51,7 +51,6 @@ class MapStateProvider extends PureComponent {
       center = this.state.center,
       zoom = this.state.zoom
     }) => {
-      console.log(center)
       // the map references doesn't update when state changes 
       // this.map.setZoom(zoom)
       this.map.panTo(center)
@@ -77,7 +76,7 @@ class MapStateProvider extends PureComponent {
       }
     }
 
-    this.setMapRef = map => this.map = map.context[MAP]
+    this.setMapRef = map => this.map = this.map ? this.map : map.context[MAP]
 
     this.functions = {
       getCirclesInViewPort: this.getCirclesInViewPort,

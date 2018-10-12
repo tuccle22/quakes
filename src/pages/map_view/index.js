@@ -11,6 +11,7 @@ import { QuakeCircleState, QuakeCircle } from '../../components/quake_circle/qua
 import { QuakeDetails } from '../../containers/quake_details';
 import DatePicker from '../../components/date_picker/date_picker'
 import { MagBar } from '../../atoms/mag_bar'
+import { LATITUDE, LONGITUDE, DEPTH } from '../../apis/usgs/earthquakes'
 
 
 import 'material-design-icons'
@@ -23,7 +24,7 @@ class MapView extends PureComponent {
           <Col sm='4'>
             <Sidebar>
               <QuakeState> 
-                {({ date, getQuakesByTime, quakeFunctions, quakes, selectedQuake, onQuakeSelect }) =>
+                {({ date, getQuakesByTime, quakeFunctions, quakes, selectedQuake, onQuakeSelect, onQuakeHover }) =>
                   <Fragment>
                     <Container>
                       <Row style={{marginTop: '16px'}}>
@@ -46,6 +47,7 @@ class MapView extends PureComponent {
                                   <ListGroup>
                                     <QuakeItemState {...quake}
                                       onQuakeSelect={onQuakeSelect}
+                                      onQuakeHover={onQuakeHover}
                                       changeCenter={changeCenter}
                                       quakeFunctions={quakeFunctions}>
                                       { props => 
@@ -72,12 +74,30 @@ class MapView extends PureComponent {
             <MapState> 
             {({ getCirclesInViewPort, changeCenter, goToLastBounds, ...mapProps }) => 
               <QuakeState> 
-              {({init, quakes, quakeFunctions, onQuakeSelect}) => 
+              {({init, quakes, quakeFunctions, onQuakeSelect, onQuakeHover, selectedQuake, hoverQuake }) => 
                 <QuakeMap {...mapProps}
                   onMounted={init}
                   defaultCenter={{lat: 49.38, lng: -66.94}}
                   defaultZoom={3}>
                   <React.Fragment>
+                    { hoverQuake &&
+                      <InfoWindow 
+                        position={{lat: hoverQuake.center.lat, lng: hoverQuake.center.lng}} 
+                        onCloseClick={() => onQuakeSelect()}>
+                        <Container fluid>
+                          <Row className='row-eq-height'>
+                            <Col sm={2}>
+                              <MagBar mag={hoverQuake.properties.mag} />
+                            </Col>
+                            <Col sm={10}>
+                              <pre>
+                                {JSON.stringify(hoverQuake, null, 2)}
+                              </pre>
+                            </Col>
+                          </Row>
+                        </Container>
+                      </InfoWindow>
+                    }
                     { window.google && 
                       <React.Fragment>
                         <MapControl position={window.google.maps.ControlPosition.TOP_CENTER}>
@@ -97,27 +117,11 @@ class MapView extends PureComponent {
                           quakeFunctions={quakeFunctions} 
                           properties={properties}
                           changeCenter={changeCenter}
+                          onQuakeHover={onQuakeHover}
                           onQuakeSelect={onQuakeSelect}
                           goToLastBounds={goToLastBounds}> 
                           { props => 
-                            <QuakeCircle {...props} properties={properties}>
-                                <InfoWindow position={{ lat, lng }} onCloseClick={() => {
-                                  onQuakeSelect(); goToLastBounds(); }
-                                }>
-                                <Container fluid>
-                                  <Row className='row-eq-height'>
-                                    <Col sm={2}>
-                                      <MagBar mag={properties.mag} />
-                                    </Col>
-                                    <Col sm={10}>
-                                      <pre>
-                                        {JSON.stringify(properties, null, 2)}
-                                      </pre>
-                                    </Col>
-                                  </Row>
-                                </Container>
-                                </InfoWindow>
-                            </QuakeCircle>
+                            <QuakeCircle {...props} properties={properties} />
                           }
                         </QuakeCircleState>
                       )

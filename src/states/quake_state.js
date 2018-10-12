@@ -8,11 +8,11 @@ import { getSessionVals, SavePropsInStorage } from '../utilities/session/session
 const [ 
   quakes = [], 
   quakeFunctions = {},
-  selectedQuake
+  selectedQuake,
 ] = getSessionVals([
   'quakes',
   'quakeFunctions',
-  'selectedQuake'
+  'selectedQuake',
 ])
 
 const { Consumer, Provider } = React.createContext()
@@ -29,7 +29,8 @@ class QuakeStateProvider extends PureComponent {
     quakes, 
     quakeFunctions,
     date: moment(),
-    selectedQuake
+    selectedQuake,
+    hoverQuake: undefined
   }
 
   getQuakesByTime = async date => {
@@ -40,19 +41,24 @@ class QuakeStateProvider extends PureComponent {
     this.setState({ date, quakes })
   }
 
-  onQuakeSelect = selectedQuake => this.setState({selectedQuake})
+  onQuakeSelect = selectedQuake => this.setState({ selectedQuake })
+
+  onQuakeHover = hoverQuake => {
+    this.setState({ hoverQuake })
+  }
   
   init = () => this.getQuakesByTime(this.state.date)
 
 
   render() {
-    const { selectedQuake: _, ...saveProps } = this.state
+    const { selectedQuake: _0, hoverQuake: _1, ...saveProps } = this.state
     return (
       <Provider 
         value={{ ...this.state, 
           init: this.init,
           onQuakeSelect: this.onQuakeSelect,
-          getQuakesByTime: this.getQuakesByTime
+          getQuakesByTime: this.getQuakesByTime,
+          onQuakeHover: this.onQuakeHover
         }}
       >
         <SavePropsInStorage {...saveProps}>
