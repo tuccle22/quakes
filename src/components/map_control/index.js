@@ -2,6 +2,9 @@ import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { createPortal } from 'react-dom'
 import { MAP } from 'react-google-maps/lib/constants'
+import { Container, Row, Col } from 'reactstrap'
+
+import './index.css'
 
 class MapControl extends PureComponent {
   constructor(props, context) {
@@ -20,9 +23,13 @@ class MapControl extends PureComponent {
   render() {
     const { children, style, ...events } = this.props
     return createPortal(
-      <div {...events} style={style} className='map-control'>
-        {children}
-      </div>,
+      <Container {...events} style={style} className='map-control'>
+        <Row>
+          <Col md={12}>
+            {children}
+          </Col>
+        </Row>
+      </Container>,
       this.controlDiv
     )
   }

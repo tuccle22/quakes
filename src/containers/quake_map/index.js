@@ -13,6 +13,7 @@ class QuakeMap extends PureComponent {
     this.props.onIdle();
     if (this.isReady) {
       this.isReady = false
+      console.log(this.props)
       this.props.onMounted();
     }
   }
@@ -23,6 +24,7 @@ class QuakeMap extends PureComponent {
   }
 
   render() {
+    console.log('QUAKE MAPS', this.props)
     const { children, ...rest } = this.props
 
     const options = window.google ? (

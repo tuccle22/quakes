@@ -8,7 +8,7 @@ import { getSessionVals, SavePropsInStorage } from '../utilities/session/session
 const [ 
   quakes = [], 
   quakeFunctions = {},
-  selectedQuake = {}
+  selectedQuake
 ] = getSessionVals([
   'quakes',
   'quakeFunctions',
@@ -25,7 +25,12 @@ const QuakeState = ({ children, ...props }) => (
 
 class QuakeStateProvider extends PureComponent {
 
-  state = { quakes, quakeFunctions, date: moment(), selectedQuake }
+  state = {
+    quakes, 
+    quakeFunctions,
+    date: moment(),
+    selectedQuake
+  }
 
   getQuakesByTime = async date => {
     const selectedDate = moment(date).format('YYYY-MM-DD')
@@ -34,20 +39,23 @@ class QuakeStateProvider extends PureComponent {
     const quakes = features.sort((a, b) => (a.properties.mag > b.properties.mag ? -1 : 1))
     this.setState({ date, quakes })
   }
+
+  onQuakeSelect = selectedQuake => this.setState({selectedQuake})
   
-  init = () => {
-    this.getQuakesByTime(this.state.date)
-  }
+  init = () => this.getQuakesByTime(this.state.date)
+
 
   render() {
+    const { selectedQuake: _, ...saveProps } = this.state
     return (
       <Provider 
         value={{ ...this.state, 
-          getQuakesByTime: this.getQuakesByTime,
-          init: this.init
+          init: this.init,
+          onQuakeSelect: this.onQuakeSelect,
+          getQuakesByTime: this.getQuakesByTime
         }}
       >
-        <SavePropsInStorage {...this.state}>
+        <SavePropsInStorage {...saveProps}>
           {this.props.children}
         </SavePropsInStorage>
       </Provider>

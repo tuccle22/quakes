@@ -35,7 +35,9 @@ class MapStateProvider extends PureComponent {
     this.goToCircle = (center, radius) => {
       // this whole thing has ot to be wrong
       const zoom = this.map.getZoom()
-      this.lastBounds = { center, zoom }
+      const lat = this.map.getCenter().lat()
+      const lng = this.map.getCenter().lng()
+      this.lastBounds = { lat, lng, zoom }
       
       const newCenterBounds = new window.google.maps.Circle({center, radius})
       this.map.fitBounds(newCenterBounds.getBounds())
@@ -45,22 +47,18 @@ class MapStateProvider extends PureComponent {
 
     this.goToLastBounds = () => this.goToBounds(this.lastBounds)
 
-
     this.goToBounds = ({
       center = this.state.center,
       zoom = this.state.zoom
     }) => {
+      console.log(center)
       // the map references doesn't update when state changes 
-      this.map.setCenter(center)
-      this.map.setZoom(zoom)
-      this.setState({ center, zoom })
+      // this.map.setZoom(zoom)
+      this.map.panTo(center)
+      // this.setState({ center, zoom })
     }
 
-    this.getCirclesInViewPort = (quakes) => {
-      const viewableQuakes = getViewableQuakes(quakes, this.map)
-
-      return viewableQuakes
-    }
+    this.getCirclesInViewPort = (quakes) => getViewableQuakes(quakes, this.map)
 
     this.onIdle = () => {
       if (notGoCrazy > 15) {
@@ -80,7 +78,6 @@ class MapStateProvider extends PureComponent {
     }
 
     this.setMapRef = map => this.map = map.context[MAP]
-
 
     this.functions = {
       getCirclesInViewPort: this.getCirclesInViewPort,
