@@ -43,8 +43,8 @@ class QuakeCircleState extends PureComponent {
   }
 
   render() {
-    const { quakeFunctions, changeCenter, ...rest } = this.props
-    return this.props.children({
+    const { children, quakeFunctions, changeCenter, ...rest } = this.props
+    return children({
       ...this.state, ...rest,
       onMouseOver: this.onMouseOver,
       onMouseOut: this.onMouseOut,

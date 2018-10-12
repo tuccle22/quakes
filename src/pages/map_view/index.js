@@ -42,23 +42,28 @@ class MapView extends PureComponent {
                         <Container fluid>
                           <Row>
                             <React.Fragment>
-                              { getCirclesInViewPort(quakes).map(quake =>
-                                <Col xl={12} key={quake.id}>
-                                  <ListGroup>
-                                    <QuakeItemState {...quake}
-                                      onQuakeSelect={onQuakeSelect}
-                                      onQuakeHover={onQuakeHover}
-                                      changeCenter={changeCenter}
-                                      quakeFunctions={quakeFunctions}>
-                                      { props => 
-                                        <React.Fragment>
-                                          <QuakeItem {...props} />
-                                        </React.Fragment>
-                                      }
-                                    </QuakeItemState>
-                                  </ListGroup>
-                                </Col>
-                              )}
+                              { getCirclesInViewPort(quakes).map(({id, geometry, properties}) => {
+                                const [lng, lat] = geometry.coordinates
+                                return (
+                                  <Col xl={12} key={id}>
+                                    <ListGroup>
+                                      <QuakeItemState id={id}
+                                        center={{lat, lng}}
+                                        properties={properties}
+                                        onQuakeSelect={onQuakeSelect}
+                                        onQuakeHover={onQuakeHover}
+                                        changeCenter={changeCenter}
+                                        quakeFunctions={quakeFunctions}>
+                                        { props => 
+                                          <React.Fragment>
+                                            <QuakeItem {...props} />
+                                          </React.Fragment>
+                                        }
+                                      </QuakeItemState>
+                                    </ListGroup>
+                                  </Col>
+                                )                              
+                              })}
                             </React.Fragment>
                           </Row>
                         </Container>

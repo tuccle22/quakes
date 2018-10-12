@@ -28,16 +28,14 @@ class QuakeItemState extends PureComponent {
   }
 
   onMouseOver = () => {
-    const { onQuakeHover, quakeFunctions, id, geometry, properties } = this.props
+    const { onQuakeHover, quakeFunctions, id, center, properties } = this.props
     quakeFunctions[id].toggleHighlightCard()
-    const [lng, lat] = geometry.coordinates
-    onQuakeHover({ id, properties, center: { lat, lng }})
+    onQuakeHover({ id, properties, center })
   }
 
   onClick = () => {
-    const { onQuakeSelect, id, properties, geometry } = this.props
-    const [ lng, lat ] = geometry.coordinates
-    onQuakeSelect({ id, properties, center: {lat, lng} })
+    const { onQuakeSelect, id, center, properties } = this.props
+    onQuakeSelect({ id, properties, center })
   }
 
   render() {
