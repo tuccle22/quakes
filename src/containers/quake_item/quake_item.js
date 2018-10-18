@@ -4,66 +4,42 @@ import { quakeShades, textColor } from '../../constants/colors'
 
 import './quake-item.css'
 
-class QuakeItemState extends PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isHighlighted: false,
-    }
-
-    this.toggleHighlight = () => {
-      this.setState( _ => _.isHighlighted ? null : ({ isHighlighted: !_.isHighlighted }))
-    }
-
-    props.quakeFunctions[props.id] = {
-      ...props.quakeFunctions[props.id],
-      toggleHighlightCard: this.toggleHighlight,
-    }
-  }
+class QuakeItem extends PureComponent {
   
-  onMouseOut = () => {
-    const { onQuakeHover, quakeFunctions, id } = this.props
-    quakeFunctions[id].toggleHighlightCard()
-    onQuakeHover()
-  }
+  onMouseOut = () => this.props.onMouseOut()
 
   onMouseOver = () => {
-    const { onQuakeHover, quakeFunctions, id, center, properties } = this.props
-    quakeFunctions[id].toggleHighlightCard()
-    onQuakeHover({ id, properties, center })
+    const { isHovered, onMouseOver, id, properties, center } = this.props
+    const quake = { id, properties, center }
+    onMouseOver({isHovered, quake})
   }
 
   onClick = () => {
-    const { onQuakeSelect, id, center, properties } = this.props
-    onQuakeSelect({ id, properties, center })
+    const { onClick, id, properties, center } = this.props
+    onClick({id, properties, center })
   }
-
+  
   render() {
-    return this.props.children({
-      properties: this.props.properties,
-      onClick: this.onClick,
-      onMouseOver: this.onMouseOver,
-      onMouseOut: this.onMouseOut,
-    })
+
+    const { onClick, properties, isHovered, onMouseOut, onMouseOver } = this.props
+    const [City, Country] = properties.place.split(" ").slice(-2)
+
+    // some magnitudes can be less than 0...who knew?
+    const bgColor = quakeShades[properties.mag > 0 ? Math.round(properties.mag) : 0]
+    const txtColor = textColor(bgColor)
+    return (
+      <ListGroupItem onClick={onClick}
+        onMouseOver={this.onMouseOver} 
+        onMouseOut={this.onMouseOut}
+        className="justify-content-between"
+        style={{backgroundColor: isHovered ? bgColor : 'inherit'}}>
+        <Badge style={{ backgroundColor: bgColor, color: txtColor }}>
+          MAG {properties.mag.toFixed(2)}
+        </Badge> &nbsp;
+        {City} {Country}
+      </ListGroupItem>
+    )
   }
 }
 
-const QuakeItem = ({
-  properties, ...rest
-}) => {
-  const [City, Country] = properties.place.split(" ").slice(-2)
-
-  // some magnitudes can be less than 0...who knew?
-  const bgColor = quakeShades[properties.mag > 0 ? Math.round(properties.mag) : 0] 
-  const txtColor = textColor(bgColor)
-  return (
-    <ListGroupItem {...rest} className="justify-content-between">
-      <Badge style={{ backgroundColor: bgColor, color: txtColor }}>
-        MAG {properties.mag.toFixed(2)}
-      </Badge> &nbsp;
-        {City} {Country}
-    </ListGroupItem>
-  )
-}
-
-export { QuakeItemState, QuakeItem }
+export { QuakeItem }

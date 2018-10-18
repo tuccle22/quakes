@@ -33,6 +33,16 @@ class QuakeStateProvider extends PureComponent {
     hoverQuake: undefined
   }
 
+  quakesFunctions = {
+    funcName: 'onHover',
+    stateName: 'isHovered',
+    functions: {},
+    initialState: false,
+    func: (isHovered) => {
+      return !isHovered
+    }
+  }
+
   getQuakesByTime = async date => {
     const selectedDate = moment(date).format('YYYY-MM-DD')
     const datePlusOne = moment(date, 'YYYY-MM-DD').add(1, 'days').format('YYYY-MM-DD');
@@ -41,13 +51,15 @@ class QuakeStateProvider extends PureComponent {
     this.setState({ date, quakes })
   }
 
-  onQuakeSelect = selectedQuake => this.setState({ selectedQuake })
-
-  onQuakeHover = hoverQuake => {
-    this.setState({ hoverQuake })
+  onQuakeSelect = selectedQuake => {
+    console.log('SELECTED QUAKE', selectedQuake)
+    this.setState({ selectedQuake: selectedQuake })
   }
+
+  onQuakeHover = hoverQuake => this.setState({ hoverQuake })
   
   init = () => this.getQuakesByTime(this.state.date)
+
 
 
   render() {
@@ -58,7 +70,8 @@ class QuakeStateProvider extends PureComponent {
           init: this.init,
           onQuakeSelect: this.onQuakeSelect,
           getQuakesByTime: this.getQuakesByTime,
-          onQuakeHover: this.onQuakeHover
+          onQuakeHover: this.onQuakeHover,
+          quakesFunctions: this.quakesFunctions
         }}
       >
         <SavePropsInStorage {...saveProps}>

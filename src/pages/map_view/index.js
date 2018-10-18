@@ -6,8 +6,8 @@ import Sidebar from '../../containers/sidebar/sidebar'
 import { MapState } from '../../states/map_state'
 import { QuakeState } from '../../states/quake_state'
 import QuakeMap from '../../containers/quake_map'
-import { QuakeItemState, QuakeItem } from '../../containers/quake_item/quake_item'
-import { QuakeCircleState, QuakeCircle } from '../../components/quake_circle/quake_circle'
+import { QuakeItem } from '../../containers/quake_item/quake_item'
+import { QuakeCircle } from '../../components/quake_circle/quake_circle'
 import { QuakeDetails } from '../../containers/quake_details';
 import DatePicker from '../../components/date_picker/date_picker'
 import { MagBar } from '../../atoms/mag_bar'
@@ -16,6 +16,7 @@ import { LATITUDE, LONGITUDE, DEPTH } from '../../apis/usgs/earthquakes'
 
 import 'material-design-icons'
 import { getPercievedRadius } from '../../utilities/map_utils';
+import { StoreFunctionsById } from '../../utilities/react_utils/react_utils';
 
 class MapView extends PureComponent {
   render() {
@@ -24,7 +25,7 @@ class MapView extends PureComponent {
           <Col sm='4'>
             <Sidebar>
               <QuakeState> 
-                {({ date, getQuakesByTime, quakeFunctions, quakes, selectedQuake, onQuakeSelect, onQuakeHover }) =>
+                {({ date, getQuakesByTime, quakesFunctions, quakes, selectedQuake, onQuakeSelect, onQuakeHover }) =>
                   <Fragment>
                     <Container>
                       <Row style={{marginTop: '16px'}}>
@@ -38,33 +39,35 @@ class MapView extends PureComponent {
                     <MapState>
                       {({ getCirclesInViewPort, changeCenter }) =>
                       <Fragment>
-                        <QuakeDetails selectedQuake={selectedQuake} />
+                        {selectedQuake && <QuakeDetails selectedQuake={selectedQuake} />}
                         <Container fluid>
                           <Row>
-                            <React.Fragment>
-                              { getCirclesInViewPort(quakes).map(({id, geometry, properties}) => {
-                                const [lng, lat] = geometry.coordinates
-                                return (
-                                  <Col xl={12} key={id}>
-                                    <ListGroup>
-                                      <QuakeItemState id={id}
-                                        center={{lat, lng}}
-                                        properties={properties}
-                                        onQuakeSelect={onQuakeSelect}
-                                        onQuakeHover={onQuakeHover}
-                                        changeCenter={changeCenter}
-                                        quakeFunctions={quakeFunctions}>
-                                        { props => 
-                                          <React.Fragment>
-                                            <QuakeItem {...props} />
-                                          </React.Fragment>
-                                        }
-                                      </QuakeItemState>
-                                    </ListGroup>
-                                  </Col>
-                                )                              
-                              })}
-                            </React.Fragment>
+                            { getCirclesInViewPort(quakes).map(({id, geometry, properties}) => {
+                              const [lng, lat] = geometry.coordinates
+                              return (
+                                <Col xl={12} key={id}>
+                                  <ListGroup>                           
+                                    <StoreFunctionsById {...quakesFunctions} id={id}>
+                                      {({ [quakesFunctions.stateName]: isHovered, 
+                                          [quakesFunctions.funcName]: onHover 
+                                      }) =>
+                                        <QuakeItem id={id}
+                                          center={{lat, lng}}
+                                          onClick={() => {
+                                            changeCenter({lat, lng}, properties.mag);
+                                            onQuakeSelect({ id, center: {lat, lng}, properties })
+                                          }}
+                                          properties={properties}
+                                          isHovered={isHovered}
+                                          onMouseOut={onHover}
+                                          onMouseOver={onHover}
+                                        />
+                                      }
+                                    </StoreFunctionsById>
+                                  </ListGroup>
+                                </Col>
+                              )                              
+                            })}
                           </Row>
                         </Container>
                       </Fragment>
@@ -79,24 +82,27 @@ class MapView extends PureComponent {
             <MapState> 
             {({ getCirclesInViewPort, changeCenter, goToLastBounds, ...mapProps }) => 
               <QuakeState> 
-              {({init, quakes, quakeFunctions, onQuakeSelect, onQuakeHover, selectedQuake, hoverQuake }) => 
+              {({init, quakes, quakesFunctions, onQuakeSelect, onQuakeHover, selectedQuake, hoverQuake }) => 
                 <QuakeMap {...mapProps}
                   onMounted={init}
                   defaultCenter={{lat: 49.38, lng: -66.94}}
                   defaultZoom={3}>
                   <React.Fragment>
-                    { hoverQuake &&
+                    { selectedQuake &&
                       <InfoWindow 
-                        position={{lat: hoverQuake.center.lat, lng: hoverQuake.center.lng}} 
-                        onCloseClick={() => onQuakeSelect()}>
+                        position={{ lat: selectedQuake.center.lat, lng: selectedQuake.center.lng}} 
+                        onCloseClick={() => {
+                          goToLastBounds()
+                          onQuakeSelect()
+                        }}>
                         <Container fluid>
                           <Row className='row-eq-height'>
                             <Col sm={2}>
-                              <MagBar mag={hoverQuake.properties.mag} />
+                              <MagBar mag={selectedQuake.properties.mag} />
                             </Col>
                             <Col sm={10}>
                               <pre>
-                                {JSON.stringify(hoverQuake, null, 2)}
+                                {JSON.stringify(selectedQuake.properties, null, 2)}
                               </pre>
                             </Col>
                           </Row>
@@ -116,21 +122,18 @@ class MapView extends PureComponent {
                     { getCirclesInViewPort(quakes).map(({id, geometry, properties}) => {
                       const [ lng, lat ] = geometry.coordinates
                       return (
-                        <QuakeCircleState key={id} id={id}
-                          center={{lat, lng}} 
-                          radius={getPercievedRadius(properties.mag)}
-                          quakeFunctions={quakeFunctions} 
+                        <QuakeCircle key={id} id={id}
+                          center={{ lat, lng }}
                           properties={properties}
-                          changeCenter={changeCenter}
-                          onQuakeHover={onQuakeHover}
-                          onQuakeSelect={onQuakeSelect}
-                          goToLastBounds={goToLastBounds}> 
-                          { props => 
-                            <QuakeCircle {...props} properties={properties} />
-                          }
-                        </QuakeCircleState>
+                          onQuakeHover={quakesFunctions.functions[id][quakesFunctions.funcName]}
+                          radius={getPercievedRadius(properties.mag)}
+                          properties={properties}
+                          onClick={() => {
+                            changeCenter({ lat, lng }, properties.mag);
+                            onQuakeSelect({ id, center: {lat, lng}, properties })
+                          }}
+                        />
                       )
-
                     })}
                   </React.Fragment>
                 </QuakeMap>

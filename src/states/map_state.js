@@ -1,8 +1,8 @@
-
 import React, { PureComponent } from 'react'
 
 import { getViewableQuakes } from '../utilities/map_utils';
 import {getSessionVals, SavePropsInStorage } from '../utilities/session/session'
+import { getPercievedRadius } from '../utilities/map_utils'
 import { MAP_OPTIONS } from '../constants/defaults';
 import { MAP } from 'react-google-maps/lib/constants'
 
@@ -32,32 +32,32 @@ class MapStateProvider extends PureComponent {
     this.map = undefined
     this.lastBounds = { center, zoom }
 
-    this.goToCircle = (center, radius) => {
+    this.goToCircle = (center, mag) => {
       // this whole thing has ot to be wrong
       const zoom = this.map.getZoom()
       const lat = this.map.getCenter().lat()
       const lng = this.map.getCenter().lng()
-      this.lastBounds = { lat, lng, zoom }
+      this.lastBounds = { center: {lat, lng}, zoom }
       
-      const newCenterBounds = new window.google.maps.Circle({center, radius})
+      const newCenterBounds = new window.google.maps.Circle({ center, radius: getPercievedRadius(mag) })
       this.map.fitBounds(newCenterBounds.getBounds())
-      
+      console.log(this.lastBounds)
       this.setState({ center, zoom })
     }
 
-    this.goToLastBounds = () => this.goToBounds(this.lastBounds)
+    this.goToLastBounds = () => this.goToBounds({...this.lastBounds})
 
     this.goToBounds = ({
       center = this.state.center,
       zoom = this.state.zoom
     }) => {
-      // the map references doesn't update when state changes 
-      // this.map.setZoom(zoom)
-      this.map.panTo(center)
-      // this.setState({ center, zoom })
+      // the map reference doesn't update when state changes 
+      this.map.setZoom(zoom)
+      this.map.setCenter(center)
+      this.setState({ center, zoom })
     }
 
-    this.getCirclesInViewPort = (quakes) => getViewableQuakes(quakes, this.map)
+    this.getCirclesInViewPort = quakes => getViewableQuakes(quakes, this.map)
 
     this.onIdle = () => {
       if (notGoCrazy > 15) {
