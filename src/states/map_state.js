@@ -32,35 +32,51 @@ class MapStateProvider extends PureComponent {
     this.map = undefined
     this.lastBounds = { center, zoom }
 
-    this.goToCircle = (center, mag) => {
-      // this whole thing has ot to be wrong
+
+    this.saveBounds = () => {
       const zoom = this.map.getZoom()
       const lat = this.map.getCenter().lat()
       const lng = this.map.getCenter().lng()
-      this.lastBounds = { center: {lat, lng}, zoom }
-      
-      const newCenterBounds = new window.google.maps.Circle({ center, radius: getPercievedRadius(mag) })
-      this.map.fitBounds(newCenterBounds.getBounds())
-      console.log(this.lastBounds)
-      this.setState({ center, zoom })
+      this.lastBounds = { center: { lat, lng }, zoom }
     }
 
+    this.goToCircle = (center, mag) => {
+      this.saveBounds()
+      const newCenterBounds = new window.google.maps.Circle({ center, radius: mag })
+      this.goToBounds({bounds: newCenterBounds.getBounds()})
+    }
+    
+    /**
+     * Goes to the last saved bounds
+     */
     this.goToLastBounds = () => this.goToBounds({...this.lastBounds})
 
-    this.goToBounds = ({
-      center = this.state.center,
-      zoom = this.state.zoom
-    }) => {
-      // the map reference doesn't update when state changes 
-      this.map.setZoom(zoom)
-      this.map.setCenter(center)
-      this.setState({ center, zoom })
+    /**
+     * Either goes to bounds through a bounds window.google.maps. object or center & zoom
+     * @param bounds - google maps bounds object
+     * @param center - { lat, lng }
+     * @param zoom - number
+     */
+    this.goToBounds = ({ bounds, center, zoom }) => {
+      if (bounds) {
+        this.map.fitBounds(bounds)
+        this.setState({
+          center: {
+            lat: this.map.getCenter().lat(),
+            lng: this.map.getCenter().lng()
+          }
+        })
+      } else {
+        this.map.setCenter(center)
+        this.map.setZoom(zoom)
+        this.setState({ center, zoom })
+      }
     }
 
     this.getCirclesInViewPort = quakes => getViewableQuakes(quakes, this.map)
 
     this.onIdle = () => {
-      if (notGoCrazy > 15) {
+      if (notGoCrazy > 50) {
         alert('Things are going crazy!')
         notGoCrazy = 0
       }
@@ -81,7 +97,7 @@ class MapStateProvider extends PureComponent {
     this.functions = {
       getCirclesInViewPort: this.getCirclesInViewPort,
       setMapRef: this.setMapRef,
-      changeCenter: this.goToCircle,
+      goToCircle: this.goToCircle,
       onIdle: this.onIdle,
       goToLastBounds: this.goToLastBounds,
     }

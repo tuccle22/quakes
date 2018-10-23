@@ -12,6 +12,10 @@ export const quakeShades = {
   10: '#FF001C'
 }
 
+export function getMagColor(mag) {
+  return quakeShades[mag > 0 ? Math.round(mag) : 0]
+}
+
 export function textColor(color) {
   if (color.length < 5) {
     color += color.slice(1);

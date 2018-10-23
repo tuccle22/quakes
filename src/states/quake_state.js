@@ -51,10 +51,7 @@ class QuakeStateProvider extends PureComponent {
     this.setState({ date, quakes })
   }
 
-  onQuakeSelect = selectedQuake => {
-    console.log('SELECTED QUAKE', selectedQuake)
-    this.setState({ selectedQuake: selectedQuake })
-  }
+  onQuakeSelect = selectedQuake => this.setState({ selectedQuake })
 
   onQuakeHover = hoverQuake => this.setState({ hoverQuake })
   

@@ -7,20 +7,16 @@ import { QuakeStateProvider } from './states/quake_state'
 
 import './index.css'
 
-class Home extends PureComponent {
-  render() {
-    return (
-      <Fragment>
-        <Navbar />
-        <LayoutContainer>
-          <MapStateProvider>
-            <QuakeStateProvider>
-              <MapView />
-            </QuakeStateProvider>
-          </MapStateProvider>
-        </LayoutContainer>
-      </Fragment>
-    )
-  }
-}
+const Home = () => (
+  <Fragment>
+    <Navbar />
+    <LayoutContainer>
+      <MapStateProvider>
+        <QuakeStateProvider>
+          <MapView />
+        </QuakeStateProvider>
+      </MapStateProvider>
+    </LayoutContainer>
+  </Fragment>
+)
 export default Home

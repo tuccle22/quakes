@@ -1,32 +1,20 @@
 import React, { PureComponent } from 'react'
+import { Circle } from 'react-google-maps'
 import Radius from '../../atoms/radius/radius'
-import { quakeShades } from '../../constants/colors'
+import { quakeShades, getMagColor } from '../../constants/colors'
 
 
-class QuakeCircle extends PureComponent {
-  
-  onMouseOut = () => {
-    const { onQuakeHover, id } = this.props
-    onQuakeHover()
-  }
-
-  onMouseOver = () => {
-    const { onQuakeHover, id, center, properties } = this.props
-    onQuakeHover({ id, center, properties })
-  }
-
-  render() {
-    const { onClick, isSelected, properties, ...rest } = this.props
-    const color = quakeShades[properties.mag > 0 ? Math.round(properties.mag) : 0]
-    return (
-      <Radius {...rest}
-        onClick={onClick}
-        color={color} 
-        onMouseOut={this.onMouseOut}
-        onMouseOver={this.onMouseOver}
+const QuakeCircle = ({ radius, properties, ...rest }) => (  
+      <Circle {...rest}
+        defaultRadius={radius}
+        defaultOptions={{
+          strokeColor: getMagColor(properties.mag),
+          strokeOpacity: 1,
+          strokeWeight: 2,
+          fillColor: getMagColor(properties.mag),
+          fillOpacity: 0.2,
+        }}
       />
     )
-  }
-}
 
 export { QuakeCircle }
