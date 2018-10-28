@@ -1,18 +1,17 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { quakeShades } from '../../constants/colors';
-import './mag-bar.css'
+import './index.css'
 
-class MagBar extends PureComponent {
-  render() {
-    const { mag } = this.props
-    const bgColor = quakeShades[mag > 0 ? Math.round(mag) : 0] 
-    const style = { background: `linear-gradient(0deg, ${bgColor} ${mag * 10}%, #FFFFFF 50%)` }
-
+const MagBar = ({ mag, style, ...events }) => {
+    const bgColor = quakeShades[mag > 0 ? Math.round(mag) : 0]
+    const background = { background: `linear-gradient(0deg, ${bgColor} ${mag * 10}%, #FFFFFF 50%)` }
     return (
-      <div style={style} className='mag-bar' />
+      <div {...events}
+        style={{...background, ...style}} 
+        className='mag-bar'
+      />
     )
-  }
 }
 
 MagBar.propTypes = {

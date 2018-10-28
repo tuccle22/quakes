@@ -1,6 +1,8 @@
-import React, { PureComponent, Fragment } from 'react'
-import { ListGroupItem, Badge } from 'reactstrap';
+import React, { PureComponent } from 'react'
+import { Container, Row, Col, ListGroupItem, Badge } from 'reactstrap'
+import classNames from 'classnames'
 import { quakeShades, textColor } from '../../constants/colors'
+import { MagBar } from '../../atoms/mag_bar'
 
 import './quake-item.css'
 
@@ -20,23 +22,32 @@ class QuakeItem extends PureComponent {
   }
   
   render() {
-
-    const { onClick, properties, isHovered, onMouseOut, onMouseOver } = this.props
-    const [City, Country] = properties.place.split(" ").slice(-2)
+    const { onClick, properties, isHovered } = this.props
+    const [ City, Country ] = properties.place.split(" ").slice(-2)
 
     // some magnitudes can be less than 0...who knew?
     const bgColor = quakeShades[properties.mag > 0 ? Math.round(properties.mag) : 0]
     const txtColor = textColor(bgColor)
+    const cssClasses = classNames({'quake-item': true, 'quake-item-hover': isHovered})
     return (
       <ListGroupItem onClick={onClick}
         onMouseOver={this.onMouseOver} 
         onMouseOut={this.onMouseOut}
-        className="justify-content-between"
+        className={cssClasses}
         style={{backgroundColor: isHovered ? bgColor : 'inherit'}}>
-        <Badge style={{ backgroundColor: bgColor, color: txtColor }}>
-          MAG {properties.mag.toFixed(2)}
-        </Badge> &nbsp;
-        {City} {Country}
+        <Container fluid>
+          <Row>
+            <Col md={1}>
+              <MagBar mag={properties.mag} />
+            </Col>
+            <Col md={11}>
+              <Badge style={{ backgroundColor: bgColor, color: txtColor }}>
+                MAG {properties.mag.toFixed(2)}
+              </Badge> &nbsp;
+              {City} {Country}
+            </Col>
+          </Row>
+        </Container>
       </ListGroupItem>
     )
   }

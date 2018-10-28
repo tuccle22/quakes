@@ -23,13 +23,11 @@ class MapControl extends PureComponent {
   render() {
     const { children, style, ...events } = this.props
     return createPortal(
-      <Container {...events} style={style} className='map-control'>
-        <Row>
-          <Col md={12}>
-            {children}
-          </Col>
-        </Row>
-      </Container>,
+      <div {...events} style={style} className='map-control-container'>
+        <div className='map-control'>
+          {children}
+        </div>
+      </div>,
       this.controlDiv
     )
   }
