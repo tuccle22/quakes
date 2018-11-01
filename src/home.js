@@ -5,6 +5,7 @@ import LayoutContainer from './pages/layout_container'
 import { MapStateProvider } from './states/map_state'
 import { QuakeStateProvider } from './states/quake_state'
 
+import 'material-design-icons'
 import './index.css'
 
 const Home = () => (
@@ -19,4 +20,4 @@ const Home = () => (
     </LayoutContainer>
   </Fragment>
 )
-export default Home
+export { Home }

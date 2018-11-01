@@ -27,8 +27,8 @@ class QuakeMap extends PureComponent {
 
     const options = window.google ? (
       { mapTypeControlOptions: {
-          style: window.google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
-          position: window.google.maps.ControlPosition.TOP_CENTER
+          style: null,
+          position: null
         }
       }
     ) : {}
@@ -38,7 +38,7 @@ class QuakeMap extends PureComponent {
         googleMapURL={`${GoogleMapsBase}?key=${googleMapsApiKey}&libraries=geometry`}
         loadingElement={<div style={{ height: `100%` }} />}
         containerElement={<div style={{ height: `100%` }} />}
-        mapElement={<div style={{ height: `100%`, borderRadius: '4px', boxShadow: '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)' }} />}
+        mapElement={<div className='map-element' />}
         options={options}
         onIdle={this.onIdle}
         onMapMounted={this.setMapRef}

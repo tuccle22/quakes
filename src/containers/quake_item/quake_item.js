@@ -30,25 +30,23 @@ class QuakeItem extends PureComponent {
     const txtColor = textColor(bgColor)
     const cssClasses = classNames({'quake-item': true, 'quake-item-hover': isHovered})
     return (
-      <ListGroupItem onClick={onClick}
+      <Container onClick={onClick}
         onMouseOver={this.onMouseOver} 
         onMouseOut={this.onMouseOut}
         className={cssClasses}
         style={{backgroundColor: isHovered ? bgColor : 'inherit'}}>
-        <Container fluid>
-          <Row>
-            <Col md={1}>
-              <MagBar mag={properties.mag} />
-            </Col>
-            <Col md={11}>
-              <Badge style={{ backgroundColor: bgColor, color: txtColor }}>
-                MAG {properties.mag.toFixed(2)}
-              </Badge> &nbsp;
-              {City} {Country}
-            </Col>
-          </Row>
-        </Container>
-      </ListGroupItem>
+        <Row>
+          <Col md={1}>
+            <MagBar mag={properties.mag} />
+          </Col>
+          <Col md={11}>
+            <Badge style={{ backgroundColor: bgColor, color: txtColor }}>
+              MAG {properties.mag.toFixed(2)}
+            </Badge> &nbsp;
+            {City} {Country}
+          </Col>
+        </Row>
+      </Container>
     )
   }
 }

@@ -1,6 +1,14 @@
+/* Popover element */
 .SingleDatePicker_picker {
-  position: fixed !important;
-  margin-top: 72px;
-  margin-left: 4px;
+  margin-top:8px;
+  border-radius: 4px;
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+
+.SingleDatePickerInput {
+  border-radius: 4px;
+  padding: 4px;
+  margin: 4px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  margin-top: 4px;
 }

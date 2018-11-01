@@ -16,85 +16,62 @@ import { QuakePopover } from '../../containers/quake_popover'
 
 import { getPercievedRadius } from '../../utilities/map_utils';
 import { StoreFunctionsById } from '../../utilities/react_utils/react_utils';
-import 'material-design-icons'
+
+import './index.css'
 
 const MapView = () => (
   <Container fluid className='full-height'>
-    <Row noGutters>
-      <Col sm={4}>
-        <Container fluid className='padding-top'>
-          <Row>
-            <Col sm={12}>
-              <QuakeState>
-                {({ date, getQuakesByTime }) =>
-                  <DatePicker date={date}
-                    getQuakesByTime={getQuakesByTime}
-                  />
-                }
-              </QuakeState>
-            </Col>
-          </Row>
-        </Container>
-      </Col>
-      <Col sm={8}>
-        <Container fluid className='padding-top'>
-          <Row>
-            <Col sm={12}>
-              
-            </Col>
-          </Row>
-        </Container>
-      </Col>
-    </Row>
     <Row noGutters className='full-height'>
-      <Col sm={4}>
+      <Col sm={4} className='map-sidebar' style={{paddingRight: '8px'}}>
         <Sidebar>
           <QuakeState> 
             {({ quakesFunctions, quakes, selectedQuake, onQuakeSelect, onQuakeHover }) =>
-              <Fragment>
-                <MapState>
-                  {({ getCirclesInViewPort, goToCircle }) =>
-                  <Fragment>
-                    {selectedQuake && <QuakeDetails {...selectedQuake} />}
-                    <Container fluid>
-                      <Row>
-                        { getCirclesInViewPort(quakes).map(({id, geometry, properties}) => {
-                          const [lng, lat] = geometry.coordinates
-                          return (
-                            <Col xl={12} key={id}>
-                              <ListGroup>                           
-                                <StoreFunctionsById {...quakesFunctions} id={id}>
-                                  {({ [quakesFunctions.stateName]: isHovered, 
-                                      [quakesFunctions.funcName]: onHover 
-                                  }) =>
-                                    <QuakeItem id={id}
-                                      center={{lat, lng}}
-                                      onClick={() => {
-                                        goToCircle({ lat, lng }, getPercievedRadius(properties.mag));
-                                        onQuakeSelect({ id, center: {lat, lng}, properties })
-                                      }}
-                                      properties={properties}
-                                      isHovered={isHovered}
-                                      onMouseOut={() => { onHover(); onQuakeHover() }}
-                                      onMouseOver={() => { onHover(); onQuakeHover({ center: { lat, lng }, id, properties}) }}
-                                />
-                              }
-                                </StoreFunctionsById>
-                              </ListGroup>
-                            </Col>
-                          )                              
-                        })}
-                      </Row>
-                    </Container>
-                  </Fragment>
-                  }
-                </MapState> 
-              </Fragment>
+              <MapState>
+                {({ getCirclesInViewPort, goToCircle }) =>
+                <Fragment>
+                  {selectedQuake && <QuakeDetails {...selectedQuake} />}
+                    <Container fluid style={{ marginRight: '8px' }}>
+                      <Row style={{ marginRight: '-8px' }}>
+                      { getCirclesInViewPort(quakes).map(
+                        ({id, geometry, properties}) => {
+                        const [lng, lat] = geometry.coordinates
+                        return (
+                          <StoreFunctionsById key={id} {...quakesFunctions} id={id}>
+                            {({ [quakesFunctions.stateName]: isHovered,
+                              [quakesFunctions.funcName]: onHover
+                            }) =>
+                              <QuakeItem id={id}
+                                center={{ lat, lng }}
+                                onClick={() => {
+                                  goToCircle({ lat, lng }, getPercievedRadius(properties.mag));
+                                  onQuakeSelect({ id, center: { lat, lng }, properties })
+                                }}
+                                properties={properties}
+                                isHovered={isHovered}
+                                onMouseOut={() => { onHover(); onQuakeHover() }}
+                                onMouseOver={() => { onHover(); onQuakeHover({ center: { lat, lng }, id, properties }) }}
+                              />
+                            }
+                          </StoreFunctionsById>
+                        )
+                      })}
+                    </Row>
+                  </Container>
+                </Fragment>
+                }
+              </MapState> 
             }
           </QuakeState>
         </Sidebar>
       </Col>
       <Col sm={8}>
+        <QuakeState>
+          {({ date, getQuakesByTime }) =>
+            <DatePicker date={date}
+              getQuakesByTime={getQuakesByTime}
+            />
+          }
+        </QuakeState>
         <MapState> 
         {({ getCirclesInViewPort, goToCircle, goToLastBounds, ...mapProps }) => 
           <QuakeState> 

@@ -40,10 +40,13 @@ class MapStateProvider extends PureComponent {
       this.lastBounds = { center: { lat, lng }, zoom }
     }
 
-    this.goToCircle = (center, mag) => {
+    this.goToCircle = (center, radius) => {
       this.saveBounds()
-      const newCenterBounds = new window.google.maps.Circle({ center, radius: mag })
+      const newCenterBounds = new window.google.maps.Circle({ center, radius })
       this.goToBounds({bounds: newCenterBounds.getBounds()})
+      this.map.setZoom(this.map.getZoom() - 1)
+      this.setState({ zoom: this.map.getZoom() - 1})
+
     }
     
     /**
